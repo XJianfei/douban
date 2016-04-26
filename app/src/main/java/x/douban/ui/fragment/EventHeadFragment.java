@@ -5,14 +5,13 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import x.douban.R;
 
 /**
  * Created by Peter on 16/4/26.
  */
-public class MusicFragment extends BaseFragment {
+public class EventHeadFragment extends BaseFragment {
     private ViewGroup mView = null;
 
     @Nullable
@@ -20,10 +19,7 @@ public class MusicFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (mView != null)
             return mView;
-        mView = (ViewGroup) inflater.inflate(R.layout.subject_content, container, false);
-        TextView tv = new TextView(getContext());
-        tv.setText("music");
-        mView.addView(tv);
+        mView = (ViewGroup) inflater.inflate(R.layout.subject, container, false);
         return mView;
     }
 }

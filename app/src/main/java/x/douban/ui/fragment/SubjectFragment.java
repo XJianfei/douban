@@ -54,6 +54,8 @@ public class SubjectFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return null;
+        /*
         if (mView != null)
             return mView;
         ViewGroup vg = (ViewGroup) inflater.inflate(R.layout.subject, container, false);
@@ -129,5 +131,6 @@ public class SubjectFragment extends BaseFragment {
             });
         mView = vg;
         return vg;
+        */
     }
 }
