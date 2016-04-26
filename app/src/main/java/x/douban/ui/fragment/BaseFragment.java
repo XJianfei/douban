@@ -1,6 +1,6 @@
-package x.douban.ui.activity;
+package x.douban.ui.fragment;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 
 /**
  * Created by Peter on 16/4/25.
