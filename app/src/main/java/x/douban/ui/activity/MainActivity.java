@@ -12,12 +12,29 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.ResponseBody;
+import retrofit2.Response;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import x.douban.R;
+import x.douban.common.Book;
 import x.douban.common.Subject;
+import x.douban.service.DoubanService;
+import x.douban.service.DoubanServiceImpl;
 import x.douban.ui.adpater.SubjectPagerAdpater;
+import x.douban.ui.fragment.SubjectFragment;
+import x.douban.utils.L;
+import x.douban.utils.MiscUtil;
 
 /**
  * Created by Peter on 16/4/25.
@@ -27,6 +44,7 @@ public class MainActivity extends BaseActivity {
     private ViewPager mSubjectView = null;
     private FragmentPagerAdapter mSubjectAdapter = null;
     private TabLayout mSubjectTab = null;
+    private DoubanService mDoubanService = null;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Window window = getWindow();
@@ -41,6 +59,8 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.main);
 
         initSubject();
+        mDoubanService = DoubanServiceImpl.getService();
+
     }
 
     private void initSubject(){
