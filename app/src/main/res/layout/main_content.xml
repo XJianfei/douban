@@ -34,14 +34,15 @@
                     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                     app:layout_collapseMode="pin" />
 
-                <android.support.design.widget.TabLayout
+                <x.douban.ui.widget.RippleTabLayout
                     android:id="@+id/subject_tab"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    android:background="@color/background_material_light"
+                    android:background="@null"
                     android:layout_gravity="bottom"
                     app:tabGravity="fill"
                     app:tabIndicatorColor="@color/colorPrimaryDark" />
+                        <!--android:background="@color/background_material_light" />-->
             </android.support.design.widget.CollapsingToolbarLayout>
         </android.support.design.widget.AppBarLayout>
         <android.support.v4.widget.NestedScrollView

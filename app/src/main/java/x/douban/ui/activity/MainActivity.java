@@ -1,5 +1,7 @@
 package x.douban.ui.activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -44,6 +46,7 @@ import x.douban.ui.fragment.MovieHeadFragment;
 import x.douban.ui.fragment.MusicFragment;
 import x.douban.ui.fragment.MusicHeadFragment;
 import x.douban.ui.fragment.SubjectFragment;
+import x.douban.ui.widget.RippleTabLayout;
 import x.douban.utils.L;
 import x.douban.utils.MiscUtil;
 
@@ -54,7 +57,7 @@ public class MainActivity extends BaseActivity {
 
     private ViewPager mSubjectView = null;
     private FragmentPagerAdapter mSubjectAdapter = null;
-    private TabLayout mSubjectTab = null;
+    private RippleTabLayout mSubjectTab = null;
     private DoubanService mDoubanService = null;
 
     private FragmentManager mFragmentManager = getSupportFragmentManager();
@@ -80,36 +83,43 @@ public class MainActivity extends BaseActivity {
 
     private class FragmentCouple {
         public String title;
+        public int color;
         public Fragment head;
         public Fragment bottom;
-        public FragmentCouple(String title, Fragment head, Fragment bottom) {
+        public FragmentCouple(String title, int color, Fragment head, Fragment bottom) {
             this.title = title;
+            this.color = color;
             this.head = head;
             this.bottom = bottom;
         }
     }
     private void initSubject(){
-        mSubjectTab = (TabLayout) findViewById(R.id.subject_tab);
+        mSubjectTab = (RippleTabLayout) findViewById(R.id.subject_tab);
         FragmentCouple[] fragmentCouples = new FragmentCouple[4];
-        fragmentCouples[0] = new FragmentCouple(getString(R.string.book),
+        fragmentCouples[0] = new FragmentCouple(getString(R.string.book), 0xFF00B0FF,
             new BookHeadFragment(), new BookFragment());
-        fragmentCouples[1] = new FragmentCouple(getString(R.string.movie),
+        fragmentCouples[1] = new FragmentCouple(getString(R.string.movie), 0xFF43A047,
             new MovieHeadFragment(), new MovieFragment());
-        fragmentCouples[2] = new FragmentCouple(getString(R.string.music),
+        fragmentCouples[2] = new FragmentCouple(getString(R.string.music), 0xFF7B1FA2,
             new MusicHeadFragment(), new MusicFragment());
-        fragmentCouples[3] = new FragmentCouple(getString(R.string.event),
+        fragmentCouples[3] = new FragmentCouple(getString(R.string.event), 0xFFE64A19,
             new EventHeadFragment(), new EventFragment());
         for (FragmentCouple fc : fragmentCouples) {
             mSubjectTab.addTab(mSubjectTab.newTab().setText(fc.title).setTag(fc));
         }
+
         FragmentTransaction ft = mFragmentManager.beginTransaction();
         ft.add(R.id.subject_head, fragmentCouples[0].head).add(R.id.subject_content, fragmentCouples[0].bottom);
         ft.commit();
+
+        mSubjectTab.setBackgroundColor(fragmentCouples[0].color);
+        mSubjectTab.setRealBackgroundColor(fragmentCouples[0].color);
         mSubjectTab.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 FragmentTransaction ft = mFragmentManager.beginTransaction();
                 FragmentCouple fragmentCouple = (FragmentCouple) tab.getTag();
+                mSubjectTab.setBackgroundColor(fragmentCouple.color);
                 if (mLastSubjectTab == null || tab.getPosition() > mLastSubjectTab.getPosition()) {
                     ft.setCustomAnimations(
                         R.anim.fragment_slide_in_from_right,
@@ -140,20 +150,5 @@ public class MainActivity extends BaseActivity {
 
             }
         });
-        /*
-        mSubjectView = (ViewPager) findViewById(R.id.viewpager);
-
-        List<Subject> subjects = new ArrayList<>();
-        Subject subject = new Subject(Subject.SUBJECT_BOOK, getString(R.string.book));
-        subjects.add(subject);
-        subject = new Subject(Subject.SUBJECT_MOVIE, getString(R.string.movie));
-        subjects.add(subject);
-        subject = new Subject(Subject.SUBJECT_MUSIC, getString(R.string.music));
-        subjects.add(subject);
-        subject = new Subject(Subject.SUBJECT_EVENT, getString(R.string.event));
-        subjects.add(subject);
-        mSubjectAdapter = new SubjectPagerAdpater(getSupportFragmentManager(), mSubjectView, subjects);
-        mSubjectView.setAdapter(mSubjectAdapter);
-        */
     }
 }
