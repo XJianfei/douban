@@ -18,7 +18,8 @@ import x.rxcache.RxImageLoader;
 /**
  * Created by Peter on 16/4/27.
  */
-public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
+public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder>
+            implements View.OnClickListener {
     private Context mContext = null;
     private List<Book> mBooks = null;
     public BookAdapter(Context context, List<Book> books) {
@@ -36,6 +37,8 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
         Book book = mBooks.get(position);
         RxImageLoader.loadImageToView(holder.image, book.image);
         holder.title.setText(book.title);
+        holder.root.setTag(book);
+        holder.root.setOnClickListener(this);
     }
 
     @Override
@@ -43,12 +46,26 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
         return mBooks.size();
     }
 
+    private OnItemClickListener listener = null;
+    @Override
+    public void onClick(View v) {
+        if (listener != null) {
+            listener.onItemClickListener(v, (Book) v.getTag());
+        }
+    }
+    public interface OnItemClickListener {
+        void onItemClickListener(View v, Book book);
+    }
+    public void setOnItemClickListener(OnItemClickListener l) {listener = l;}
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView image = null;
         private TextView title = null;
+        private View root = null;
 
         private void init(View view) {
             if (view == null) return;
+            root = view;
             image = (ImageView) view.findViewById(R.id.book_image);
             title = (TextView) view.findViewById(R.id.book_title);
         }

@@ -22,6 +22,7 @@
         <ImageView
             android:id="@+id/book_image"
             android:scaleType="centerCrop"
+            android:transitionName="@string/transition_book_image"
             android:layout_width="@dimen/book_item_width"
             android:layout_height="@dimen/book_item_height"/>
 

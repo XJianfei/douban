@@ -1,8 +1,13 @@
 package x.douban.ui.fragment;
 
+import android.content.ComponentName;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -31,6 +36,7 @@ import x.douban.R;
 import x.douban.common.Book;
 import x.douban.service.DoubanService;
 import x.douban.service.DoubanServiceImpl;
+import x.douban.ui.activity.BookActivity;
 import x.douban.ui.adpater.BookAdapter;
 import x.douban.utils.L;
 import x.douban.utils.MiscUtil;
@@ -57,6 +63,27 @@ public class BookFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (mView != null)
             return mView;
+        BookAdapter.OnItemClickListener listener = new BookAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClickListener(View v, Book book) {
+                L.dbg("click:" + book);
+                if (book == null) {
+                    L.error("click book is null");
+                    return;
+                }
+                Intent intent = new Intent();
+                intent.setComponent(
+                    new ComponentName(getActivity(), BookActivity.class));
+                intent.putExtra(BookActivity.BOOK_URL, book.url);
+                intent.putExtra(BookActivity.BOOK_IMAGE, book.image);
+//                startActivity(intent);
+                ActivityCompat.startActivity(getActivity(), intent,
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        getActivity(),
+                        Pair.create(v, getActivity().getResources().getString(R.string.transition_book_image))
+                    ).toBundle());
+            }
+        };
         mView = (ViewGroup) inflater.inflate(R.layout.book_subject, container, false);
         mNewBookView = (RecyclerView) mView.findViewById(R.id.new_book_list);
         mNewBookAdapter = new BookAdapter(getContext(), mNewBooks);
@@ -66,6 +93,7 @@ public class BookFragment extends BaseFragment {
         mNewBookView.setAdapter(mNewBookAdapter);
         mNewBookView.setNestedScrollingEnabled(false);
         mNewBookView.setHasFixedSize(false);
+        mNewBookAdapter.setOnItemClickListener(listener);
 
         mPopularBookView = (RecyclerView) mView.findViewById(R.id.popular_book_list);
         mPopularBookAdapter = new BookAdapter(getContext(), mPopularBooks);
@@ -75,6 +103,7 @@ public class BookFragment extends BaseFragment {
         mPopularBookView.setAdapter(mPopularBookAdapter);
         mPopularBookView.setNestedScrollingEnabled(false);
         mPopularBookView.setHasFixedSize(false);
+        mPopularBookAdapter.setOnItemClickListener(listener);
 
         mHoteBookView = (RecyclerView) mView.findViewById(R.id.hot_ebook_list);
         mHoteBookAdapter = new BookAdapter(getContext(), mHoteBooks);
@@ -84,6 +113,7 @@ public class BookFragment extends BaseFragment {
         mHoteBookView.setAdapter(mHoteBookAdapter);
         mHoteBookView.setNestedScrollingEnabled(false);
         mHoteBookView.setHasFixedSize(false);
+        mHoteBookAdapter.setOnItemClickListener(listener);
 
         DoubanService mDoubanService = DoubanServiceImpl.getService();
         mDoubanService.bookIndex()
