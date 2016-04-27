@@ -2,10 +2,15 @@ package x.douban.ui.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
+import android.annotation.TargetApi;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -55,22 +60,13 @@ import x.douban.utils.MiscUtil;
  */
 public class MainActivity extends BaseActivity {
 
-    private ViewPager mSubjectView = null;
-    private FragmentPagerAdapter mSubjectAdapter = null;
     private RippleTabLayout mSubjectTab = null;
     private DoubanService mDoubanService = null;
+    private CollapsingToolbarLayout mCollapsingToolbarLayout = null;
 
     private FragmentManager mFragmentManager = getSupportFragmentManager();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        Window window = getWindow();
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(Color.TRANSPARENT);
-            window.setEnterTransition(new Explode());
-        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
@@ -81,19 +77,37 @@ public class MainActivity extends BaseActivity {
 
     private TabLayout.Tab mLastSubjectTab = null;
 
-    private class FragmentCouple {
-        public String title;
-        public int color;
-        public Fragment head;
-        public Fragment bottom;
-        public FragmentCouple(String title, int color, Fragment head, Fragment bottom) {
-            this.title = title;
-            this.color = color;
-            this.head = head;
-            this.bottom = bottom;
+    private void setMainThemeColor(int color) {
+        setScrimColor(color);
+        mSubjectTab.setBackgroundColor(color);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setStatusBarColor(color);
         }
     }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void setStatusBarColor(int color) {
+        final Window window = getWindow();
+        int colorStatusFrom = window.getStatusBarColor();
+        int colorStatusTo = color;
+        ValueAnimator colorStatusAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorStatusFrom, colorStatusTo);
+        colorStatusAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                window.setStatusBarColor((int)animation.getAnimatedValue());
+            }
+        });
+        colorStatusAnimation.setDuration(getResources().getInteger(R.integer.ripple_anim_duration));
+        colorStatusAnimation.setStartDelay(0);
+        colorStatusAnimation.start();
+    }
+    private final void setScrimColor(int color) {
+        if (mCollapsingToolbarLayout != null)
+            mCollapsingToolbarLayout.setContentScrimColor(color);
+    }
+
     private void initSubject(){
+        mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout);
         mSubjectTab = (RippleTabLayout) findViewById(R.id.subject_tab);
         FragmentCouple[] fragmentCouples = new FragmentCouple[4];
         fragmentCouples[0] = new FragmentCouple(getString(R.string.book), 0xFF00B0FF,
@@ -112,14 +126,25 @@ public class MainActivity extends BaseActivity {
         ft.add(R.id.subject_head, fragmentCouples[0].head).add(R.id.subject_content, fragmentCouples[0].bottom);
         ft.commit();
 
+        mSubjectTab.setSelectedTabIndicatorColor(Color.WHITE);
         mSubjectTab.setBackgroundColor(fragmentCouples[0].color);
         mSubjectTab.setRealBackgroundColor(fragmentCouples[0].color);
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setEnterTransition(new Explode());
+        }
+        setMainThemeColor(fragmentCouples[0].color);
         mSubjectTab.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 FragmentTransaction ft = mFragmentManager.beginTransaction();
                 FragmentCouple fragmentCouple = (FragmentCouple) tab.getTag();
-                mSubjectTab.setBackgroundColor(fragmentCouple.color);
+                setMainThemeColor(fragmentCouple.color);
+
                 if (mLastSubjectTab == null || tab.getPosition() > mLastSubjectTab.getPosition()) {
                     ft.setCustomAnimations(
                         R.anim.fragment_slide_in_from_right,
@@ -150,5 +175,17 @@ public class MainActivity extends BaseActivity {
 
             }
         });
+    }
+    private class FragmentCouple {
+        public String title;
+        public int color;
+        public Fragment head;
+        public Fragment bottom;
+        public FragmentCouple(String title, int color, Fragment head, Fragment bottom) {
+            this.title = title;
+            this.color = color;
+            this.head = head;
+            this.bottom = bottom;
+        }
     }
 }

@@ -40,6 +40,7 @@
                     android:layout_height="?attr/actionBarSize"
                     android:background="@null"
                     android:layout_gravity="bottom"
+                    app:tabTextColor="@color/tab_color"
                     app:tabGravity="fill"
                     app:tabIndicatorColor="@color/colorPrimaryDark" />
                         <!--android:background="@color/background_material_light" />-->
