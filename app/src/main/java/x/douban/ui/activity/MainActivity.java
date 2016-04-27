@@ -54,6 +54,7 @@ import x.douban.ui.fragment.SubjectFragment;
 import x.douban.ui.widget.RippleTabLayout;
 import x.douban.utils.L;
 import x.douban.utils.MiscUtil;
+import x.rxcache.RxImageLoader;
 
 /**
  * Created by Peter on 16/4/25.
@@ -70,7 +71,9 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
+        L.dbg("start douban");
         initSubject();
+        RxImageLoader.init(this);
         mDoubanService = DoubanServiceImpl.getService();
 
     }
@@ -90,6 +93,7 @@ public class MainActivity extends BaseActivity {
         final Window window = getWindow();
         int colorStatusFrom = window.getStatusBarColor();
         int colorStatusTo = color;
+
         ValueAnimator colorStatusAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorStatusFrom, colorStatusTo);
         colorStatusAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override

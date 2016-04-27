@@ -4,4 +4,6 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="tab_color">#FAFAFA</color>
+
+    <color name="new_book_item_bg">#FFFFFF</color>
 </resources>

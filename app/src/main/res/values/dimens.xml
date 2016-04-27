@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="book_item_width">140dp</dimen>
+    <dimen name="book_item_height">210dp</dimen>
+    <dimen name="book_item_title_height">20dp</dimen>
+</resources>
