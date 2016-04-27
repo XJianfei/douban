@@ -44,6 +44,14 @@ public class BookFragment extends BaseFragment {
     private BookAdapter mNewBookAdapter = null;
     private List<Book> mNewBooks = new ArrayList<>();
 
+    private RecyclerView mPopularBookView = null;
+    private BookAdapter mPopularBookAdapter = null;
+    private List<Book> mPopularBooks = new ArrayList<>();
+
+    private RecyclerView mHoteBookView = null;
+    private BookAdapter mHoteBookAdapter = null;
+    private List<Book> mHoteBooks = new ArrayList<>();
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -58,6 +66,25 @@ public class BookFragment extends BaseFragment {
         mNewBookView.setAdapter(mNewBookAdapter);
         mNewBookView.setNestedScrollingEnabled(false);
         mNewBookView.setHasFixedSize(false);
+
+        mPopularBookView = (RecyclerView) mView.findViewById(R.id.popular_book_list);
+        mPopularBookAdapter = new BookAdapter(getContext(), mPopularBooks);
+        linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        mPopularBookView.setLayoutManager(linearLayoutManager);
+        mPopularBookView.setAdapter(mPopularBookAdapter);
+        mPopularBookView.setNestedScrollingEnabled(false);
+        mPopularBookView.setHasFixedSize(false);
+
+        mHoteBookView = (RecyclerView) mView.findViewById(R.id.hot_ebook_list);
+        mHoteBookAdapter = new BookAdapter(getContext(), mHoteBooks);
+        linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        mHoteBookView.setLayoutManager(linearLayoutManager);
+        mHoteBookView.setAdapter(mHoteBookAdapter);
+        mHoteBookView.setNestedScrollingEnabled(false);
+        mHoteBookView.setHasFixedSize(false);
+
         DoubanService mDoubanService = DoubanServiceImpl.getService();
         mDoubanService.bookIndex()
             .observeOn(Schedulers.computation())
@@ -88,11 +115,24 @@ public class BookFragment extends BaseFragment {
                                     mNewBookAdapter.notifyDataSetChanged();
                                 }
                             });
-//                            List<TextView> tvs = new ArrayList<TextView>();
-//                            for (Book b : books) {
-//                                L.dbg(""+b);
-//                            }
-                            L.dbg("Count:" + es.size() + " book:" + mNewBooks.size());
+
+                            es = doc.select(".popular-books .list-col li");
+                            mPopularBooks.addAll(Book.parseFromIndex(es));
+                            mPopularBookView.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mPopularBookAdapter.notifyDataSetChanged();
+                                }
+                            });
+
+                            es = doc.select(".ebook-area .list-col li");
+                            mHoteBooks.addAll(Book.parseFromIndex(es));
+                            mHoteBookView.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mHoteBookAdapter.notifyDataSetChanged();
+                                }
+                            });
                         } catch (IOException e) {
                             L.error(MiscUtil.getStackTrace(e));
                         }

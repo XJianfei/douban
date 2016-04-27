@@ -4,11 +4,72 @@
               android:id="@+id/content"
               android:layout_width="match_parent"
               android:layout_height="wrap_content">
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/new_book_list"
-        android:scrollbars="none"
-        android:layout_centerVertical="true"
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/default_margin"
+        android:layout_marginBottom="@dimen/default_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    </android.support.v7.widget.RecyclerView>
+        <TextView
+            android:text="@string/new_book_title"
+            android:textSize="@dimen/book_new_title"
+            android:textColor="@android:color/black"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/new_book_list"
+            android:scrollbars="none"
+            android:layout_centerVertical="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </android.support.v7.widget.RecyclerView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/default_margin"
+        android:layout_marginBottom="@dimen/default_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:text="@string/popular_book_title"
+            android:textSize="@dimen/book_new_title"
+            android:textColor="@android:color/black"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/popular_book_list"
+            android:scrollbars="none"
+            android:layout_centerVertical="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </android.support.v7.widget.RecyclerView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/default_margin"
+        android:layout_marginBottom="@dimen/default_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:text="@string/hot_ebook_title"
+            android:textSize="@dimen/book_new_title"
+            android:textColor="@android:color/black"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/hot_ebook_list"
+            android:scrollbars="none"
+            android:layout_centerVertical="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </android.support.v7.widget.RecyclerView>
+    </LinearLayout>
 </LinearLayout>
