@@ -76,6 +76,7 @@ public class BookFragment extends BaseFragment {
                     new ComponentName(getActivity(), BookActivity.class));
                 intent.putExtra(BookActivity.BOOK_URL, book.url);
                 intent.putExtra(BookActivity.BOOK_IMAGE, book.image);
+                intent.putExtra(BookActivity.BOOK_TITLE, book.title);
 //                startActivity(intent);
                 ActivityCompat.startActivity(getActivity(), intent,
                     ActivityOptionsCompat.makeSceneTransitionAnimation(

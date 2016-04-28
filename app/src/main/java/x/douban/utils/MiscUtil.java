@@ -1,5 +1,6 @@
 package x.douban.utils;
 
+import android.content.Context;
 import android.os.StatFs;
 
 import java.io.BufferedReader;
@@ -192,5 +193,14 @@ public class MiscUtil {
                            File f2) {
             return Long.valueOf(f1.lastModified()).compareTo(f2.lastModified());
         }
+    }
+    public int getStatusBarHeight(Context context) {
+        int result = 0;
+        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+
+        if (resourceId > 0) {
+            result = context.getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 }
