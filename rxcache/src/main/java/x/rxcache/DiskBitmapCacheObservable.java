@@ -136,7 +136,7 @@ public class DiskBitmapCacheObservable extends CacheObservable {
     }
 
     private boolean putDiskCache(String key, Bitmap bitmap) {
-        if (bitmap == null)
+        if (bitmap == null || mCache == null)
             return false;
 
         OutputStream out = null;

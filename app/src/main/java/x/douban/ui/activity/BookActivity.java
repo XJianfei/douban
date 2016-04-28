@@ -1,6 +1,7 @@
 package x.douban.ui.activity;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.renderscript.Allocation;
@@ -62,18 +63,17 @@ public class BookActivity extends BaseActivity
                 @Override
                 public void call(Data data) {
                     if (data.object instanceof Bitmap) {
-                        bookImage.setImageBitmap((Bitmap) data.object);
+                        Bitmap bm = (Bitmap) data.object;
+                        bookImage.setImageBitmap(bm);
                         blur((Bitmap) data.object, image);
                         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             Window window = getWindow();
                             window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
                             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                            int color = colorLightFromBitmap((Bitmap) data.object);
-                            if (color != 0) {
-                                window.setStatusBarColor(color);
-                                mCollapsingToolbarLayout.setContentScrimColor(color);
-                            }
+                            int color = colorLightFromBitmap(bm);
+                            mCollapsingToolbarLayout.setContentScrimColor(color);
+                            window.setStatusBarColor(color);
                             window.setEnterTransition(new Explode());
                         }
                     }
@@ -100,14 +100,20 @@ public class BookActivity extends BaseActivity
     private int colorLightFromBitmap(Bitmap bitmap) {
         Palette palette = new Palette.Builder(bitmap).generate();
         if (palette != null)
-            return palette.getVibrantColor(0);
-        return 0;
+            return palette.getVibrantColor(Color.BLACK);
+        return Color.BLACK;
+    }
+    private Palette.Swatch colorSwatchFromBitmap(Bitmap bitmap) {
+        Palette palette = new Palette.Builder(bitmap).generate();
+        if (palette != null)
+            return palette.getVibrantSwatch(); //(0xFF00B0FF);
+        return null;
     }
     private int colorDarkFromBitmap(Bitmap bitmap) {
         Palette palette = new Palette.Builder(bitmap).generate();
         if (palette != null)
-            return palette.getDarkMutedColor(0);
-        return 0;
+            return palette.getDarkMutedColor(0xFF00B0FF);
+        return 0xFF00B0FF;
     }
 
     @Override
@@ -116,7 +122,6 @@ public class BookActivity extends BaseActivity
         float percentage = (float) Math.abs(verticalOffset) / (float) maxScroll;
         if (percentage > 0.7) {
             mBookToolbar.setVisibility(View.VISIBLE);
-//            float alpha = percentage > 0.98 ? 1.0f : percentage / 2 + 0.1f;
             mBookToolbar.setAlpha(percentage);
         } else {
             mBookToolbar.setVisibility(View.INVISIBLE);

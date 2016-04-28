@@ -2,6 +2,7 @@ package x.douban.utils;
 
 import android.content.Context;
 import android.os.StatFs;
+import android.util.TypedValue;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -194,7 +195,7 @@ public class MiscUtil {
             return Long.valueOf(f1.lastModified()).compareTo(f2.lastModified());
         }
     }
-    public int getStatusBarHeight(Context context) {
+    public static int getStatusBarHeight(Context context) {
         int result = 0;
         int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
 
@@ -203,4 +204,33 @@ public class MiscUtil {
         }
         return result;
     }
+
+    public static int getAttrInteger(Context context, int attr) {
+        TypedValue tv = new TypedValue();
+        int value = 0;
+        if (context.getTheme().resolveAttribute(attr, tv, true)) {
+            value = TypedValue.complexToDimensionPixelSize(tv.data,context.getResources().getDisplayMetrics());
+        }
+        return value;
+    }
+    public static int px2dip(Context context, float pxValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (pxValue / scale + 0.5f);
+    }
+
+    public static int dip2px(Context context, float dipValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dipValue * scale + 0.5f);
+    }
+
+    public static int px2sp(Context context, float pxValue) {
+        final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+        return (int) (pxValue / fontScale + 0.5f);
+    }
+
+    public static int sp2px(Context context, float spValue) {
+        final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+        return (int) (spValue * fontScale + 0.5f);
+    }
+
 }
