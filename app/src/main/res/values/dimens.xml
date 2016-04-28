@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="book_item_width">140dp</dimen>
-    <dimen name="book_item_height">210dp</dimen>
+    <dimen name="book_item_width">100dp</dimen>
+    <dimen name="book_item_height">150dp</dimen>
+    <dimen name="book_item_width_big">140dp</dimen>
+    <dimen name="book_item_height_big">210dp</dimen>
     <dimen name="book_bg_height">260dp</dimen>
     <dimen name="book_item_title_height">20dp</dimen>
     <dimen name="book_new_title">18dp</dimen>

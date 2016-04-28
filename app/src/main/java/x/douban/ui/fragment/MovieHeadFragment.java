@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import x.douban.R;
 
@@ -19,7 +20,8 @@ public class MovieHeadFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (mView != null)
             return mView;
-        mView = (ViewGroup) inflater.inflate(R.layout.subject, container, false);
+        mView = (ViewGroup) inflater.inflate(R.layout.movie_subject_head, container, false);
+
         return mView;
     }
 }

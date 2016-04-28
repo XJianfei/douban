@@ -19,7 +19,7 @@ public class MusicHeadFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (mView != null)
             return mView;
-        mView = (ViewGroup) inflater.inflate(R.layout.subject, container, false);
+        mView = (ViewGroup) inflater.inflate(R.layout.music_subject_head, container, false);
         return mView;
     }
 }

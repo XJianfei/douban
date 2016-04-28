@@ -19,7 +19,7 @@ public class EventHeadFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (mView != null)
             return mView;
-        mView = (ViewGroup) inflater.inflate(R.layout.subject, container, false);
+        mView = (ViewGroup) inflater.inflate(R.layout.event_subject_head, container, false);
         return mView;
     }
 }

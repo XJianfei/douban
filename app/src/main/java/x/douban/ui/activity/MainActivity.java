@@ -114,9 +114,9 @@ public class MainActivity extends BaseActivity {
         mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout);
         mSubjectTab = (RippleTabLayout) findViewById(R.id.subject_tab);
         FragmentCouple[] fragmentCouples = new FragmentCouple[4];
-        fragmentCouples[0] = new FragmentCouple(getString(R.string.book), 0xFF00B0FF,
+        fragmentCouples[0] = new FragmentCouple(getString(R.string.book), 0xFF43A047,
             new BookHeadFragment(), new BookFragment());
-        fragmentCouples[1] = new FragmentCouple(getString(R.string.movie), 0xFF43A047,
+        fragmentCouples[1] = new FragmentCouple(getString(R.string.movie), 0xFF00B0FF,
             new MovieHeadFragment(), new MovieFragment());
         fragmentCouples[2] = new FragmentCouple(getString(R.string.music), 0xFF7B1FA2,
             new MusicHeadFragment(), new MusicFragment());
