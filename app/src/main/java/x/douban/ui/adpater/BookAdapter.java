@@ -11,8 +11,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import x.douban.R;
-import x.douban.common.Book;
-import x.douban.utils.L;
+import x.douban.model.Book;
 import x.rxcache.RxImageLoader;
 
 /**

@@ -1,7 +1,5 @@
 package x.douban.ui.activity;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
@@ -10,38 +8,18 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
 import android.transition.Explode;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import okhttp3.ResponseBody;
-import retrofit2.Response;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import x.douban.R;
-import x.douban.common.Book;
-import x.douban.common.Subject;
 import x.douban.service.DoubanService;
 import x.douban.service.DoubanServiceImpl;
-import x.douban.ui.adpater.SubjectPagerAdpater;
 import x.douban.ui.fragment.BookFragment;
 import x.douban.ui.fragment.BookHeadFragment;
 import x.douban.ui.fragment.EventFragment;
@@ -50,10 +28,8 @@ import x.douban.ui.fragment.MovieFragment;
 import x.douban.ui.fragment.MovieHeadFragment;
 import x.douban.ui.fragment.MusicFragment;
 import x.douban.ui.fragment.MusicHeadFragment;
-import x.douban.ui.fragment.SubjectFragment;
 import x.douban.ui.widget.RippleTabLayout;
 import x.douban.utils.L;
-import x.douban.utils.MiscUtil;
 import x.rxcache.RxImageLoader;
 
 /**
@@ -94,7 +70,8 @@ public class MainActivity extends BaseActivity {
         int colorStatusFrom = window.getStatusBarColor();
         int colorStatusTo = color;
 
-        ValueAnimator colorStatusAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorStatusFrom, colorStatusTo);
+        ValueAnimator colorStatusAnimation =
+            ValueAnimator.ofObject(new ArgbEvaluator(), colorStatusFrom, colorStatusTo);
         colorStatusAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -111,14 +88,15 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initSubject(){
-        mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout);
+        mCollapsingToolbarLayout =
+            (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout);
         mSubjectTab = (RippleTabLayout) findViewById(R.id.subject_tab);
         FragmentCouple[] fragmentCouples = new FragmentCouple[4];
-        fragmentCouples[0] = new FragmentCouple(getString(R.string.book), 0xFF43A047,
+        fragmentCouples[0] = new FragmentCouple(getString(R.string.book), 0xFFFF9800,
             new BookHeadFragment(), new BookFragment());
-        fragmentCouples[1] = new FragmentCouple(getString(R.string.movie), 0xFF00B0FF,
+        fragmentCouples[1] = new FragmentCouple(getString(R.string.movie), 0xFF6D4C41,
             new MovieHeadFragment(), new MovieFragment());
-        fragmentCouples[2] = new FragmentCouple(getString(R.string.music), 0xFF7B1FA2,
+        fragmentCouples[2] = new FragmentCouple(getString(R.string.music), 0xFF3F51B5,
             new MusicHeadFragment(), new MusicFragment());
         fragmentCouples[3] = new FragmentCouple(getString(R.string.event), 0xFFE64A19,
             new EventHeadFragment(), new EventFragment());
@@ -127,7 +105,8 @@ public class MainActivity extends BaseActivity {
         }
 
         FragmentTransaction ft = mFragmentManager.beginTransaction();
-        ft.add(R.id.subject_head, fragmentCouples[0].head).add(R.id.subject_content, fragmentCouples[0].bottom);
+        ft.add(R.id.subject_head, fragmentCouples[0].head)
+            .add(R.id.subject_content, fragmentCouples[0].bottom);
         ft.commit();
 
         mSubjectTab.setSelectedTabIndicatorColor(Color.WHITE);
@@ -165,7 +144,8 @@ public class MainActivity extends BaseActivity {
                 if (fragmentCouple.head.isAdded()) {
                     ft.show(fragmentCouple.head).show(fragmentCouple.bottom);
                 } else {
-                    ft.add(R.id.subject_head, fragmentCouple.head).add(R.id.subject_content, fragmentCouple.bottom);
+                    ft.add(R.id.subject_head, fragmentCouple.head)
+                        .add(R.id.subject_content, fragmentCouple.bottom);
                 }
                 ft.commit();
             }

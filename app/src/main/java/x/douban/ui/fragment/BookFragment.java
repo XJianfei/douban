@@ -2,7 +2,6 @@ package x.douban.ui.fragment;
 
 import android.content.ComponentName;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -13,8 +12,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -26,14 +23,10 @@ import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Response;
-import rx.Observable;
 import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import x.douban.R;
-import x.douban.common.Book;
+import x.douban.model.Book;
 import x.douban.service.DoubanService;
 import x.douban.service.DoubanServiceImpl;
 import x.douban.ui.activity.BookActivity;
