@@ -3,6 +3,7 @@ package x.rxcache;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -27,17 +28,28 @@ public class XObservable extends Observable {
     protected XObservable(OnSubscribe f) {
         super(f);
     }
-    public static ConnectableObservable<Data> addCaches(final CacheObservable... ts) {
+
+    abstract static class XSubscriber<T> extends Subscriber<T> {
+        CacheObservable[] caches = null;
+
+        public Subscriber<T> setCaches(CacheObservable[] caches) {
+            this.caches = caches;
+            return this;
+        }
+    }
+
+    public static ConnectableObservable<Data> addCaches(CacheObservable... ts) {
         ArrayList<Observable<Data>> list = new ArrayList<>();
-        for(CacheObservable t: ts)
+        for(CacheObservable t: ts) {
             list.add(t.observable);
+        }
         ConnectableObservable<Data> co = concat(from(list)).first(new Func1<Data, Boolean>() {
-            @Override
-            public Boolean call(Data data) {
-                return (data != null && data.isAvailable() && data.isLastest());
-            }
-        }).publish();
-        co.subscribe(new Subscriber<Data>() {
+                @Override
+                public Boolean call(Data data) {
+                    return (data != null && data.isAvailable() && data.isLastest());
+                }
+            }).publish();
+        co.subscribe(new XSubscriber<Data>() {
             @Override
             public void onCompleted() {
 
@@ -50,11 +62,11 @@ public class XObservable extends Observable {
 
             @Override
             public void onNext(Data data) {
-                for(CacheObservable t: ts) {
+                for(CacheObservable t: caches) {
                     t.save(data);
                 }
             }
-        });
+        }.setCaches(ts));
         return co;
     }
 }

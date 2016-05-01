@@ -5,13 +5,13 @@ import android.support.v4.util.LruCache;
 import rx.Observable;
 import rx.Subscriber;
 
-public class MemoryCacheObservable extends CacheObservable {
-    private static LruCache<String, Object> mMemoryCache = null;
+public class MemoryCacheObservable<T> extends CacheObservable<T> {
+    private static LruCache mMemoryCache = null;
 
-    public LruCache<String, Object> getLruCache() {
+    public LruCache<String, T> getLruCache() {
         return mMemoryCache;
     }
-    public void setLruCache(LruCache<String, Object> lc) {
+    public void setLruCache(LruCache<String, T> lc) {
         this.mMemoryCache = lc;
     }
 
@@ -53,10 +53,10 @@ public class MemoryCacheObservable extends CacheObservable {
         }
     }
 
-    public Object cache(String url) {
+    public T cache(String url) {
         if (mMemoryCache ==  null)
             return null;
-        return mMemoryCache.get(url);
+        return (T) mMemoryCache.get(url);
     }
 
 }

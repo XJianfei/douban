@@ -19,11 +19,21 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
+import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.observables.ConnectableObservable;
+import rx.schedulers.Schedulers;
 import x.douban.R;
+import x.douban.model.Book;
+import x.douban.service.DoubanService;
+import x.douban.service.DoubanServiceImpl;
 import x.douban.utils.L;
+import x.douban.utils.MiscUtil;
+import x.douban.utils.RxBookLoader;
 import x.rxcache.Data;
 import x.rxcache.RxImageLoader;
 
@@ -35,10 +45,12 @@ public class BookActivity extends BaseActivity
     public static final String BOOK_URL = "book_url";
     public static final String BOOK_IMAGE = "book_image";
     public static final String BOOK_TITLE = "book_title";
+    public static final String BOOK_ID = "book_id";
     private CollapsingToolbarLayout mCollapsingToolbarLayout = null;
     private Toolbar mBookToolbar = null;
     private TextView mBookTitleView = null;
     private String mTitle = "";
+    private int id = 0;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +92,76 @@ public class BookActivity extends BaseActivity
                 }
             });
         co.connect();
+
+        id = getIntent().getIntExtra(BOOK_ID, 0);
+        if (id == 0) {
+            try {
+                String[] p = url.split("/");
+                if (p.length > 4) {
+                    id = Integer.parseInt(p[4]);
+                }
+            } catch (Exception e) {
+                L.error(MiscUtil.getStackTrace(e));
+            }
+        }
+        if (id != 0) {
+            DoubanService mDoubanService = DoubanServiceImpl.getService();
+            mDoubanService.book(id)
+                .subscribeOn(Schedulers.io())
+                .map(new Func1<x.douban.gson.Book, Book>() {
+                    @Override
+                    public Book call(x.douban.gson.Book book) {
+                        Book b = new Book();
+                        b.setId(Integer.parseInt(book.getId()));
+                        return b;
+                    }
+                })
+                .subscribe(new Observer<Book>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        L.error(MiscUtil.getStackTrace(e));
+                    }
+
+                    @Override
+                    public void onNext(Book book) {
+                    }
+                });
+        } else {
+            L.error("book id error");
+        }
+
+        RxBookLoader.init(this);
+        ConnectableObservable connectableObservable = RxBookLoader.getLoaderObservable("" + id);
+        connectableObservable.subscribeOn(Schedulers.io())
+            .subscribe(new Observer() {
+                @Override
+                public void onCompleted() {
+
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    L.error(MiscUtil.getStackTrace(e));
+                }
+
+                @Override
+                public void onNext(Object o) {
+                    if (o instanceof Data) {
+                        Book book = (Book) ((Data) o).object;
+                        L.dbg("" + book.title);
+                        if (book != null) {
+                            ((TextView)findViewById(R.id.summary)).setText(book.catalog);
+                        }
+                    }
+                }
+            });
+        connectableObservable.connect();
+
     }
     private void blur(Bitmap bkg, ImageView view) {
         float radius = 6;

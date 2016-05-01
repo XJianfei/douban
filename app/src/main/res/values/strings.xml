@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">DouBan</string>
+    <string name="book">图书</string>
+    <string name="movie">电影</string>
+    <string name="music">音乐</string>
+    <string name="event">活动</string>
     <string name="new_book_title">新书速递</string>
     <string name="popular_book_title">最受关注图书</string>
     <string name="hot_ebook_title">热门电子书</string>

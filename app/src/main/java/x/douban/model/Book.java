@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Table(database = XDataBase.class, name = "book")
 public class Book extends BaseModel {
-    @PrimaryKey(autoincrement = true)
+    @PrimaryKey()
     private int id;
     @Column(name = "isbn10", length = 10)
     public String isbn10;
@@ -47,13 +47,13 @@ public class Book extends BaseModel {
     @Column
     public int num_rating;
     @Column
-    public int average_rating;
+    public float average_rating;
     @Column
     public String tags;
     @Column
     public String binding;
     @Column
-    public float price;
+    public String price;
     @Column
     public String series_id;
     @Column
@@ -69,7 +69,7 @@ public class Book extends BaseModel {
     @Column
     public String ebook_url;
     @Column
-    public float ebook_price;
+    public String ebook_price;
 
 
     public int getId() {

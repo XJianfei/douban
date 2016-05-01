@@ -2,6 +2,8 @@ package x.rxcache;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.LayerDrawable;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,7 +55,6 @@ public class NetBitmapCacheObservable extends CacheObservable {
 
     @Override
     public void save(Data data) {
-
     }
 
     @Override

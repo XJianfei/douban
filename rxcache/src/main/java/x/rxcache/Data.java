@@ -3,11 +3,11 @@ package x.rxcache;
 /**
  * Created by Peter on 16/4/22.
  */
-public class Data {
-    public Object object;
+public class Data<T> {
+    public T object;
     public String info;
 
-    public Data(Object o, String info) {
+    public Data(T o, String info) {
         this.object = o;
         this.info = info;
     }
