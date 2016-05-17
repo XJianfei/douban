@@ -7,6 +7,7 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import javax.xml.transform.Source;
 
+import rx.Observer;
 import rx.functions.Action1;
 import rx.observables.ConnectableObservable;
 import rx.schedulers.Schedulers;
@@ -90,9 +91,19 @@ public class RxBookLoader {
                         final Data data = new Data(null, key);
                         service.book(Integer.parseInt(key))
                             .subscribeOn(Schedulers.immediate())
-                            .subscribe(new Action1<x.douban.gson.Book>() {
+                            .subscribe(new Observer<x.douban.gson.Book>() {
                                 @Override
-                                public void call(x.douban.gson.Book book) {
+                                public void onCompleted() {
+
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    L.error(MiscUtil.getStackTrace(e));
+                                }
+
+                                @Override
+                                public void onNext(x.douban.gson.Book book) {
                                     data.object = gsonToModel(book);
                                 }
                             });

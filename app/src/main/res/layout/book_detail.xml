@@ -77,15 +77,79 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-        <FrameLayout
+        <LinearLayout
             android:id="@+id/subject_content"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/default_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <io.techery.properratingbar.ProperRatingBar
+                    android:id="@+id/rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/default_margin"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    app:prb_defaultRating="5"
+                    app:prb_symbolicTick="★"
+                    app:prb_symbolicTickNormalColor="@android:color/darker_gray"
+                    app:prb_symbolicTickSelectedColor="@color/rating_color"
+                    app:prb_totalTicks="5"
+                    />
+                <TextView
+                    android:id="@+id/rating_average"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/default_margin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/rating_count"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/default_margin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
             <TextView
-                android:id="@+id/summary"
+                android:id="@+id/short_info"
+                android:textColor="@color/text_color"
+                android:layout_marginLeft="@dimen/default_margin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-        </FrameLayout>
+            <TextView
+                android:text="@string/book_summary"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="@dimen/default_margin"
+                android:layout_marginTop="@dimen/default_margin"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/summary"
+                android:maxLines="@integer/book_summary_line"
+                android:background="@drawable/text_bg"
+                android:ellipsize="end"
+                android:textColor="@color/text_color"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:text="@string/book_category"
+                android:layout_marginTop="@dimen/default_margin"
+                android:layout_marginLeft="@dimen/default_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/category"
+                android:maxLines="@integer/book_summary_line"
+                android:background="@drawable/text_bg"
+                android:ellipsize="end"
+                android:textColor="@color/text_color"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
     <android.support.v7.widget.CardView

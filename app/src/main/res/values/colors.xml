@@ -6,4 +6,6 @@
     <color name="tab_color">#FAFAFA</color>
 
     <color name="new_book_item_bg">#FFFFFF</color>
+    <color name="text_color">#FF000000</color>
+    <color name="rating_color">#FDD835</color>
 </resources>

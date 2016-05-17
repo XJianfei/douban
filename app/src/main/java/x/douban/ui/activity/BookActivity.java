@@ -1,5 +1,11 @@
 package x.douban.ui.activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
+import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
@@ -10,17 +16,30 @@ import android.renderscript.ScriptIntrinsicBlur;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.animation.ValueAnimatorCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.ViewUtils;
+import android.text.TextUtils;
 import android.transition.Explode;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewAnimationUtils;
+import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ViewAnimator;
 
 import org.w3c.dom.Text;
 
+import io.techery.properratingbar.ProperRatingBar;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -51,6 +70,81 @@ public class BookActivity extends BaseActivity
     private TextView mBookTitleView = null;
     private String mTitle = "";
     private int id = 0;
+    private ProperRatingBar mRatingBar = null;
+
+    private class TextOnClickListener implements View.OnClickListener {
+        private int defaultHeight = -1;
+        private int marginHeight = -1;
+        private int defaultMaxLine;
+        public TextOnClickListener() {
+            this.defaultHeight = defaultHeight;
+            this.marginHeight = marginHeight;
+            defaultMaxLine =
+                getResources().getInteger(R.integer.book_summary_line);
+        }
+        @Override
+        public void onClick(View v) {
+            final TextView textView = (TextView) v;
+            if (defaultHeight == -1) {
+                defaultHeight = textView.getHeight();
+                marginHeight = defaultHeight - textView.getLayout().getHeight();
+            }
+            ViewGroup.LayoutParams params = textView.getLayoutParams();
+            params.height = textView.getHeight();
+            textView.setLayoutParams(params);
+            int currentLine = textView.getLineCount();
+            if (currentLine <= defaultMaxLine) {
+                textView.setMaxLines(1000);
+                textView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        int lastHeight = textView.getLayout().getHeight() + marginHeight;
+                        ValueAnimator animator = ValueAnimator
+                            .ofInt(textView.getHeight(), lastHeight);
+//                                            animator.setInterpolator(new DecelerateInterpolator());
+                        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                        animator.setDuration(500);
+                        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                            @Override
+                            public void onAnimationUpdate(ValueAnimator animation) {
+                                ViewGroup.LayoutParams params = textView.getLayoutParams();
+                                params.height = (int) animation.getAnimatedValue();
+                                textView.setLayoutParams(params);
+                            }
+                        });
+                        animator.start();
+                    }
+                });
+            } else {
+                textView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        ValueAnimator animator = ValueAnimator
+                            .ofInt(textView.getHeight(), defaultHeight);
+                        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                        animator.setDuration(500);
+                        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                            @Override
+                            public void onAnimationUpdate(ValueAnimator animation) {
+                                ViewGroup.LayoutParams params = textView.getLayoutParams();
+                                params.height = (int) animation.getAnimatedValue();
+                                textView.setLayoutParams(params);
+                            }
+                        });
+                        animator.addListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                textView.setMaxLines(defaultMaxLine);
+                            }
+                        });
+                        animator.start();
+                    }
+                });
+            }
+        }
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,36 +198,6 @@ public class BookActivity extends BaseActivity
                 L.error(MiscUtil.getStackTrace(e));
             }
         }
-        if (id != 0) {
-            DoubanService mDoubanService = DoubanServiceImpl.getService();
-            mDoubanService.book(id)
-                .subscribeOn(Schedulers.io())
-                .map(new Func1<x.douban.gson.Book, Book>() {
-                    @Override
-                    public Book call(x.douban.gson.Book book) {
-                        Book b = new Book();
-                        b.setId(Integer.parseInt(book.getId()));
-                        return b;
-                    }
-                })
-                .subscribe(new Observer<Book>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        L.error(MiscUtil.getStackTrace(e));
-                    }
-
-                    @Override
-                    public void onNext(Book book) {
-                    }
-                });
-        } else {
-            L.error("book id error");
-        }
 
         RxBookLoader.init(this);
         ConnectableObservable connectableObservable = RxBookLoader.getLoaderObservable("" + id);
@@ -153,9 +217,27 @@ public class BookActivity extends BaseActivity
                 public void onNext(Object o) {
                     if (o instanceof Data) {
                         Book book = (Book) ((Data) o).object;
-                        L.dbg("" + book.title);
                         if (book != null) {
-                            ((TextView)findViewById(R.id.summary)).setText(book.catalog);
+                            TextView mSummaryView = ((TextView)findViewById(R.id.summary));
+                            mSummaryView.setText(book.summary);
+                            TextOnClickListener listener = new TextOnClickListener();
+                            mSummaryView.setOnClickListener(listener);
+                            TextView mCategoryView = ((TextView)findViewById(R.id.category));
+                            mCategoryView.setText(book.catalog);
+                            listener = new TextOnClickListener();
+                            mCategoryView.setOnClickListener(listener);
+
+                            mRatingBar = (ProperRatingBar) findViewById(R.id.rating);
+                            L.dbg("R:" + book.average_rating);
+                            mRatingBar.setRating((int) book.average_rating / 2);
+
+                            TextView tv = (TextView) findViewById(R.id.rating_average);
+                            tv.setText("" + book.average_rating);
+                            tv = (TextView) findViewById(R.id.rating_count);
+                            tv.setText("" + book.num_rating + "人评价");
+                            tv = (TextView) findViewById(R.id.short_info);
+                            tv.setText("" + book.author + "/" + book.publisher
+                                + "/" + book.pubdate + "/" + book.pages + "页");
                         }
                     }
                 }

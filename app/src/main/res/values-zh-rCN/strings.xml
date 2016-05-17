@@ -7,4 +7,6 @@
     <string name="new_book_title">新书速递</string>
     <string name="popular_book_title">最受关注图书</string>
     <string name="hot_ebook_title">热门电子书</string>
+    <string name="book_summary">简介</string>
+    <string name="book_category">目录</string>
 </resources>
