@@ -11,8 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <!--android:theme="@style/AppTheme" >-->
-        <activity android:name=".ui.activity.MainActivity"
+        <activity android:name="x.douban.ui.activity.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -37,10 +37,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.w3c.dom.Text;
 
+import java.io.IOException;
+import java.util.List;
+
 import io.techery.properratingbar.ProperRatingBar;
+import okhttp3.ResponseBody;
+import retrofit2.Response;
 import rx.Observer;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
@@ -48,6 +57,7 @@ import rx.observables.ConnectableObservable;
 import rx.schedulers.Schedulers;
 import x.douban.R;
 import x.douban.model.Book;
+import x.douban.model.Comment;
 import x.douban.service.DoubanService;
 import x.douban.service.DoubanServiceImpl;
 import x.douban.utils.L;
@@ -71,6 +81,7 @@ public class BookActivity extends BaseActivity
     private String mTitle = "";
     private int id = 0;
     private ProperRatingBar mRatingBar = null;
+    private DoubanService service = DoubanServiceImpl.getService();
 
     private class TextOnClickListener implements View.OnClickListener {
         private int defaultHeight = -1;
@@ -200,7 +211,7 @@ public class BookActivity extends BaseActivity
         }
 
         RxBookLoader.init(this);
-        ConnectableObservable connectableObservable = RxBookLoader.getLoaderObservable("" + id);
+        final ConnectableObservable connectableObservable = RxBookLoader.getLoaderObservable("" + id);
         connectableObservable.subscribeOn(Schedulers.io())
             .subscribe(new Observer() {
                 @Override
@@ -244,6 +255,37 @@ public class BookActivity extends BaseActivity
             });
         connectableObservable.connect();
 
+        service.get(url)
+            .subscribeOn(Schedulers.io())
+            .subscribe(new Subscriber<Response<ResponseBody>>() {
+                @Override
+                public void onCompleted() {
+
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    L.error(MiscUtil.getStackTrace(e));
+                }
+
+                @Override
+                public void onNext(Response<ResponseBody> responseBodyResponse) {
+                    L.dbg("fetch book url:" + responseBodyResponse.code());
+                    ResponseBody body = responseBodyResponse.body();
+                    if (body != null) {
+                        try {
+                            String content = body.string();
+                            Document doc = Jsoup.parse(content);
+                            // new books
+                            Elements es = doc.select(".comment-list.hot.show");
+                            List<Comment> comments = Comment.parseHotComment(es);
+                            L.dbg("comment count:" + comments.size());
+                        } catch (IOException e) {
+                            L.error(MiscUtil.getStackTrace(e));
+                        }
+                    }
+                }
+            });
     }
     private void blur(Bitmap bkg, ImageView view) {
         float radius = 6;

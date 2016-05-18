@@ -47,7 +47,7 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        L.dbg("start douban");
+        L.dbg("start douban!");
         initSubject();
         RxImageLoader.init(this);
         mDoubanService = DoubanServiceImpl.getService();
